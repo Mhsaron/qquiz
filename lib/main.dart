@@ -87,7 +87,7 @@ class _QuizPageState extends State<QuizPage> {
     true,
     true,
   ];
-  int qn = 0;
+  int qn = Random().nextInt(26);
 
   @override
   Widget build(BuildContext context) {
