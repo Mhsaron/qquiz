@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'question.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 void main() {
   runApp(QQuizer());
@@ -54,8 +55,9 @@ class _QuizPageState extends State<QuizPage> {
         q: 'Full mesh design networks are more common than partial mesh design networks.',
         a: false),
     Question(q: 'Datagrams are connection-oriented.', a: false),
+    Question(q: '', a: true),
   ];
-  int qn = Random().nextInt(8);
+  int qn = 0;
   void nextQuestion() {
     if (qn < question.length - 1) {
       qn++;
@@ -63,6 +65,21 @@ class _QuizPageState extends State<QuizPage> {
     print(qn);
     //print(question.length);
   }
+
+  bool isFinished() {
+    if (qn >= question.length - 1) {
+      print('Now returning true');
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  void reset() {
+    qn = 0;
+  }
+
+  List<Icon> Score = [];
 
   @override
   Widget build(BuildContext context) {
@@ -90,12 +107,29 @@ class _QuizPageState extends State<QuizPage> {
               color: Colors.green,
               onPressed: () {
                 bool correctAnswer = question[qn].answer;
-                if (correctAnswer == true) {
-                  print('Right');
-                } else {
-                  print('wrong');
-                }
                 setState(() {
+                  if (isFinished() == true) {
+                    Alert(
+                      context: context,
+                      title: 'Finished!',
+                      desc: 'You\'ve reached the end of the quiz.',
+                    ).show();
+
+                    reset();
+                    Score = [];
+                  } else {
+                    if (correctAnswer == true) {
+                      Score.add(Icon(
+                        Icons.check,
+                        color: Colors.green,
+                      ));
+                    } else {
+                      Score.add(Icon(
+                        Icons.close,
+                        color: Colors.red,
+                      ));
+                    }
+                  }
                   nextQuestion();
                 });
               },
@@ -110,12 +144,28 @@ class _QuizPageState extends State<QuizPage> {
               color: Colors.red,
               onPressed: () {
                 bool correctAnswer = question[qn].answer;
-                if (correctAnswer == false) {
-                  print('Right');
-                } else {
-                  print('wrong');
-                }
                 setState(() {
+                  if (isFinished() == true) {
+                    Alert(
+                      context: context,
+                      title: 'Finished!',
+                      desc: 'You\'ve reached the end of the quiz.',
+                    ).show();
+
+                    reset();
+                    Score = [];
+                  }
+                  if (correctAnswer == false) {
+                    Score.add(Icon(
+                      Icons.check,
+                      color: Colors.green,
+                    ));
+                  } else {
+                    Score.add(Icon(
+                      Icons.close,
+                      color: Colors.red,
+                    ));
+                  }
                   nextQuestion();
                 });
               },
@@ -124,16 +174,7 @@ class _QuizPageState extends State<QuizPage> {
           ),
         ),
         Row(
-          children: [
-            Icon(
-              Icons.check,
-              color: Colors.green,
-            ),
-            Icon(
-              Icons.close,
-              color: Colors.red,
-            )
-          ],
+          children: Score,
         )
       ],
     );
